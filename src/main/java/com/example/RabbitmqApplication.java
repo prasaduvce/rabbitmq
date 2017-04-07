@@ -1,6 +1,8 @@
 package com.example;
 
 import com.example.helllo.Receiver;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -17,12 +19,19 @@ public class RabbitmqApplication {
 
 	@Bean
 	Queue queue() {
-		return new Queue(queueName, false);
+		Queue queue = new Queue(queueName, false);
+		return queue;
 	}
 
 	@Bean
 	TopicExchange exchange() {
-		return new TopicExchange("spring-boot-exchange");
+		TopicExchange topicExchange = new TopicExchange("spring-boot-exchange");
+		return topicExchange;
+	}
+
+	@Bean
+	Binding binding(Queue queue, TopicExchange exchange) {
+		return BindingBuilder.bind(queue).to(exchange).with(queueName);
 	}
 
 	@Bean
